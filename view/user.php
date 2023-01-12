@@ -1,5 +1,9 @@
 <?php 
     include '../model/config.php';
+    session_start();
+    if ($_SESSION['username']==""){
+      header("location:../login.php");
+    }
     $db = new conection();
 ?>
 <!DOCTYPE html>
@@ -11,12 +15,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
         <link rel="stylesheet" href="../style/admin.css">
         <style>
-            table.zebra {
+            table.belang {
             width: 100%;
             border-collapse: collapse;
             }
-            table.zebra tr:nth-child(odd) { background: #5f5f5f; }
-            table.zebra td { padding: 10px; }
+            table.belang tr:nth-child(odd) { background: #5f5f5f; }
+            table.belang td { padding: 10px; }
             * {
             font-family: Arial, Helvetica, sans-serif;
             box-sizing: border-box;
@@ -85,14 +89,30 @@
                 <i class="ico">&#9737;</i>
                 <i class="txt">User</i>
             </a>
+            <a href="logout.php">
+                <i class="ico">&#9737;</i>
+                <i class="txt">Logout</i>
+            </a>
         </div>
 
         <main id="pgmain">
             <h1>Data User</h1>
-            <a href="add_user.php" class="btn">add user</a>
-            <a href="../controller/export_user_excel.php" class="btn-export">Export Excel</a>
-            <a href="../controller/export_user_pdf.php" class="btn-export-pdf">Export PDF</a>
-            <table class="zebra">
+            <?php
+            $user_level = $_SESSION['user_level'];
+            if($user_level == 1){
+            ?>
+                <a href="add_user.php" class="btn">add user</a>
+                <a href="../controller/export_user_excel.php" class="btn-export">Export Excel</a>
+                <a href="../controller/export_user_pdf.php" class="btn-export-pdf">Export PDF</a>
+            <?php
+            } else {
+            ?>
+                <a href="../controller/export_user_excel.php" class="btn-export">Export Excel</a>
+                <a href="../controller/export_user_pdf.php" class="btn-export-pdf">Export PDF</a>
+            <?php
+            }
+            ?>
+            <table class="belang">
             <tr>
                 <th>No.</th>
                 <th align="left">User Name</th>
@@ -109,8 +129,15 @@
                     <td><?php echo $data['user_name']; ?></td>
                     <td><img src="../asset/gambar/<?php echo $data['images']?>" alt="" width="45" height="55"></td>
                     <td align="right">
-                        <a href="edit_user.php?id=<?php echo $data['user_id'];?>" class="btn-edit">Edit</a>
-                        <a href="../controller/controller_user.php?id=<?php echo $data['user_id'];?>&action=delete" class="btn-hapus">Hapus</a>
+                        <?php
+                            $user_level = $_SESSION['user_level'];
+                            if($user_level == 1){
+                            ?>
+                            <a href="edit_user.php?id=<?php echo $data['user_id'];?>" class="btn-edit">Edit</a>
+                            <a href="../controller/controller_user.php?id=<?php echo $data['user_id'];?>&action=delete" class="btn-hapus">Hapus</a>
+                            <?php
+                            }
+                        ?>
                     </td>
                 </tr>
                 <?php

@@ -1,11 +1,15 @@
 <?php
     include '../model/config.php';
+    session_start();
+    if ($_SESSION['username']==""){
+      header("location:../login.php");
+    }
     $db = new conection();
 ?>
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Pure HTML CSS Admin Template</title>
+    <title>struktur</title>
     <meta charset="utf-8">
     <meta name="robots" content="noindex">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
@@ -39,65 +43,79 @@
       font-family: Arial, Helvetica, sans-serif;
       box-sizing: border-box;
     }
+    .btn-export-cancel{
+      display: inline-block;
+      background-color: red;
+      color: #FFFFFF;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
     </style>
   </head>
-  <body>
-  <div id="pgside">
-        <div id="pguser">
-            <i class="txt">Struktur organisasi</i>
+    <body>
+        <div id="pgside">
+            <div id="pguser">
+                <i class="txt">Struktur organisasi</i>
+            </div>
+                <a href="struktur.php" class="current">
+                    <i class="ico">&#9737;</i>
+                    <i class="txt">Struktur</i>
+                </a>
+                <a href="user.php">
+                    <i class="ico">&#9737;</i>
+                    <i class="txt">User</i>
+                </a>
+                <a href="logout.php">
+                    <i class="ico">&#9737;</i>
+                    <i class="txt">Logout</i>
+                </a>
         </div>
+        <main id="pgmain">
+            <h1>Edit Strukur</h1>
+            <form class="form" action="../controller/controller_structure.php" methode="POST">
+                <a href="struktur.php" class="btn-export-cancel">Cancel</a>
+                <?php 
+                    foreach($db->show_e_jabatan($_GET['id']) as $data){
+                ?>
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="j_id" value="<?php echo $data['j_id'] ?>">
 
-        <a href="struktur.php" class="current">
-            <i class="ico">&#9737;</i>
-            <i class="txt">Struktur</i>
-        </a>
-        <a href="user.php">
-            <i class="ico">&#9737;</i>
-            <i class="txt">User</i>
-        </a>
-    </div>
-    <main id="pgmain">
-<h1>Edit Strukur</h1>
-<form class="form" action="../controller/controller_structure.php" methode="POST">
-    <?php 
-        foreach($db->show_e_jabatan($_GET['id']) as $data){
-    ?>
-    <input type="hidden" name="action" value="update">
-    <input type="hidden" name="j_id" value="<?php echo $data['j_id'] ?>">
+                <label for="user_name_edit">User Name</label>
+                <select name="user_id_edit" id="user_name_edit">
+                    <option value="<?php echo $data['user_id'] ?>"><?php echo $data['user_name'] ?></option>
+                    <?php 
+                        foreach($db->show_user_edit($data['user_id']) as $user){
+                    ?>
+                    <option value="<?php echo $user['user_id']?>"><?php echo $user['user_name']?></option>
+                    <?php
+                        }
+                    ?>
+                </select>
 
-    <label for="user_name_edit">User Name</label>
-    <select name="user_id_edit" id="user_name_edit">
-        <option value="<?php echo $data['user_id'] ?>"><?php echo $data['user_name'] ?></option>
-        <?php 
-            foreach($db->show_user_edit($data['user_id']) as $user){
-        ?>
-        <option value="<?php echo $user['user_id']?>"><?php echo $user['user_name']?></option>
-        <?php
-            }
-        ?>
-    </select>
+                <label for="Jabatan">Jabatan</label>
+                <input type="text" name="j_name" id="Jabatan" value="<?php echo $data['j_name'] ?>">
 
-    <label for="Jabatan">Jabatan</label>
-    <input type="text" name="j_name" id="Jabatan" value="<?php echo $data['j_name'] ?>">
-
-    <label for="j_parent_id">Parent Jabatan</label>
-    <select name="j_parent_id" id="j_parent_id">
-        <?php foreach($db->show_p_jabatan($data['j_parent_id']) as $parent){?>
-        <option value="<?php echo $data['j_parent_id'] ?>"><?php echo $parent['j_name'] ?></option>
-        <?php } ?>
-        <?php 
-            foreach($db->show_jabatan_edit($data['j_id'], $data['j_parent_id']) as $jabatan){
-        ?>
-        <option value="<?php echo $jabatan['j_id']?>"><?php echo $jabatan['j_name']?></option>
-        <?php
-            }
-        ?>
-    </select>
-    <input type="submit" value="Save">
-    <?php 
-    }
-    ?>
-</form>
+                <label for="j_parent_id">Parent Jabatan</label>
+                <select name="j_parent_id" id="j_parent_id">
+                    <?php foreach($db->show_p_jabatan($data['j_parent_id']) as $parent){?>
+                    <option value="<?php echo $data['j_parent_id'] ?>"><?php echo $parent['j_name'] ?></option>
+                    <?php } ?>
+                    <?php 
+                        foreach($db->show_jabatan_edit((int)$data['j_id'], (int)$data['j_parent_id']) as $jabatan){
+                    ?>
+                    <option value="<?php echo $jabatan['j_id']?>"><?php echo $jabatan['j_name']?></option>
+                    <?php
+                        }
+                    ?>
+                </select>
+                <input type="submit" value="Save">
+                <?php 
+                }
+                ?>
+            </form>
         </main>
     </body>
 </html>

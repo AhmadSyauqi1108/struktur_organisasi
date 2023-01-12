@@ -1,5 +1,9 @@
 <?php
-    include 'model/config.php';
+    include '../model/config.php';
+    session_start();
+    if ($_SESSION['username']==""){
+      header("location:../login.php");
+    }
     $db = new conection();
 ?>
 <!DOCTYPE html>
@@ -40,15 +44,15 @@
     </style>
   </head>
   <body>
-      <form class="form" action="controller/controller_login.php" methode="POST">
-        <h1>Login</h1>
+      <form class="form" action="../controller/controller_reset.php" methode="POST">
+        <h1>Reset Password</h1>
         <label for="user_name">User Name</label>
         <input type="text" name="user_name" id="user_name">
-        <label for="pass">password</label>
+        <label for="pass">New password</label>
         <input type="password" name="pass" id="pass">
-        <input type="submit" value="Login">
+        <input type="submit" value="Reset">
         <br>
-        <a href="view/reset_pass.php">forget passsword?</a>
+        <a href="../login.php">Login</a>
     </form>
   </body>
 </html>

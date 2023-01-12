@@ -19,11 +19,6 @@ body {
   align-items: center;
   padding: 10px 5px;
 }
-#pgside #pguser img {
-  width: 50px;
-  margin-right: 5px;
-  border-radius: 50%
-}
 #pgside, #pgside a { color: #fff; }
 #pgside a {
   display: block;
